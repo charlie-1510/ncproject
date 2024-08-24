@@ -10,3 +10,7 @@ To run this project locally you must create a ".env.test" file and a ".env.devel
 Within the ".env.test" file, insert the test database name as follows PGDATABASE=<TEST_DATABASE_NAME>.
 Within the ".env.development" file, insert the development database name as follows PGDATABASE=<DEVELOPMENT_DATABASE_NAME>.
 Replace <TEST_DATABASE_NAME> and <DEVELOPMENT_DATABASE_NAME> with the test database name and development database name respectively.
+next, type "npm run setup-dbs" into your terminal in the main folders directory to setup your database.
+you may also need to install the following:
+express "npm install -D express"
+supertest "npm install -D supertest"
