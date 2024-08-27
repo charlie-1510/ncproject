@@ -28,7 +28,7 @@ exports.getArticleById = (request, response, next) => {
   const { params } = request;
   accessArticleById(params.article_id)
     .then((articleData) => {
-      response.status(200).send({ article: articleData });
+      response.status(200).send({ article: articleData[0] });
     })
     .catch((err) => {
       next(err);

@@ -53,7 +53,7 @@ describe("/api/articles/:article_id", () => {
       .expect(200)
       .then((response) => {
         const { body } = response;
-        expect(body.article[0]).toEqual({
+        expect(body.article).toEqual({
           article_id: 1,
           title: "Living in the shadow of a great man",
           topic: "mitch",
