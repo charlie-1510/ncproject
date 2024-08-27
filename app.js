@@ -1,13 +1,19 @@
 const express = require("express");
 const app = express();
-const { getTopics, getEndpoints } = require("./controllers/news.controllers");
+const {
+  getTopics,
+  getEndpoints,
+  getArticleById,
+} = require("./controllers/news.controllers");
 
 app.get("/api/topics", getTopics);
 
 app.get("/api", getEndpoints);
 
+app.get("/api/articles/:article_id", getArticleById);
+
 app.use((err, request, response, next) => {
-  console.log(err);
+  response.status(err.status).send(err.msg);
 });
 
 module.exports = app;
