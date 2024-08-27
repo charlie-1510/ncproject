@@ -1,4 +1,8 @@
-const { accessTopics, accessEndpoints } = require("../models/news.models");
+const {
+  accessTopics,
+  accessEndpoints,
+  accessArticleById,
+} = require("../models/news.models");
 
 exports.getTopics = (request, response, next) => {
   accessTopics()
@@ -16,6 +20,17 @@ exports.getEndpoints = (request, response, next) => {
       response.status(200).send({ endpoints: endpointData });
     })
     .catch((err) => {
-      return err;
+      next(err);
+    });
+};
+
+exports.getArticleById = (request, response, next) => {
+  const { params } = request;
+  accessArticleById(params.article_id)
+    .then((articleData) => {
+      response.status(200).send({ article: articleData });
+    })
+    .catch((err) => {
+      next(err);
     });
 };
