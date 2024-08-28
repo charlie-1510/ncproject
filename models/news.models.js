@@ -24,5 +24,11 @@ exports.accessArticles = () => {
 };
 
 exports.accessArticleById = (article_id) => {
-  return checkExists("articles", "article_id", article_id);
+  return checkExists("articles", "article_id", article_id).then((result) => {
+    return result[0];
+  });
+};
+
+exports.accessCommentsByArticleId = (article_id) => {
+  return checkExists("comments", "article_id", article_id, "created_at", true);
 };

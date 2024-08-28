@@ -118,3 +118,43 @@ describe("GET /api/articles", () => {
     return request(app).get("/api/articless").expect(404);
   });
 });
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("test that array of comments received have correct key value pairs", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.comments)).toBe(true);
+        body.comments.forEach((comment) => {
+          expect(comment).toHaveProperty("article_id", expect.any(Number));
+          expect(comment).toHaveProperty("comment_id", expect.any(Number));
+          expect(comment).toHaveProperty("author", expect.any(String));
+          expect(comment).toHaveProperty("created_at", expect.any(String));
+          expect(comment).toHaveProperty("votes", expect.any(Number));
+          expect(comment).toHaveProperty("body", expect.any(String));
+        });
+      });
+  });
+
+  test("receive an array with objects in descending order according to created_at key", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  test("receive code 404 when fed incorrect url", () => {
+    return request(app).get("/api/articles/1/commen").expect(404);
+  });
+
+  test("receive code 404 when fed non existent article id", () => {
+    return request(app).get("/api/articles/900/comment").expect(404);
+  });
+
+  test("receive code 404 when fed invalid article id", () => {
+    return request(app).get("/api/articles/f/comment").expect(404);
+  });
+});
