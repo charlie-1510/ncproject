@@ -3,6 +3,7 @@ const {
   accessEndpoints,
   accessArticleById,
   accessArticles,
+  accessCommentsByArticleId,
 } = require("../models/news.models");
 
 exports.getTopics = (request, response, next) => {
@@ -38,7 +39,18 @@ exports.getArticleById = (request, response, next) => {
   const { params } = request;
   accessArticleById(params.article_id)
     .then((articleData) => {
-      response.status(200).send({ article: articleData[0] });
+      response.status(200).send({ article: articleData });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getCommentsByArticleId = (request, response, next) => {
+  const { params } = request;
+  accessCommentsByArticleId(params.article_id)
+    .then((commentsData) => {
+      response.status(200).send({ comments: commentsData });
     })
     .catch((err) => {
       next(err);
