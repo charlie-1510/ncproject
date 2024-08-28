@@ -2,6 +2,7 @@ const {
   accessTopics,
   accessEndpoints,
   accessArticleById,
+  accessArticles,
 } = require("../models/news.models");
 
 exports.getTopics = (request, response, next) => {
@@ -10,7 +11,7 @@ exports.getTopics = (request, response, next) => {
       response.status(200).send({ topics: topicData });
     })
     .catch((err) => {
-      return err;
+      next(err);
     });
 };
 
@@ -24,6 +25,16 @@ exports.getEndpoints = (request, response, next) => {
     });
 };
 
+exports.getArticles = (request, response, next) => {
+  accessArticles()
+    .then((articlesData) => {
+      console.log(articlesData, "<--- article data");
+      response.status(200).send({ articles: articlesData });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 exports.getArticleById = (request, response, next) => {
   const { params } = request;
   accessArticleById(params.article_id)

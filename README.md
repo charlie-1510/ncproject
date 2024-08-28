@@ -14,3 +14,4 @@ next, type "npm run setup-dbs" into your terminal in the main folders directory 
 you may also need to install the following:
 express "npm install -D express"
 supertest "npm install -D supertest"
+jest-sorted "npm install --save-dev jest-sorted"

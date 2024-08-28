@@ -9,7 +9,7 @@ const fs = require("fs/promises");
 beforeEach(() => seed(data));
 afterAll(() => dbPool.end());
 
-describe("/api/topics", () => {
+describe("GET /api/topics", () => {
   test("receive array of topics with correct key value types", () => {
     return request(app)
       .get("/api/topics")
@@ -29,7 +29,7 @@ describe("/api/topics", () => {
   });
 });
 
-describe("/api", () => {
+describe("GET /api", () => {
   test("test that contents of endpoints.json received match file", () => {
     let result;
     return request(app)
@@ -46,7 +46,7 @@ describe("/api", () => {
   });
 });
 
-describe("/api/articles/:article_id", () => {
+describe("GET /api/articles/:article_id", () => {
   test("test correct article is received when fed an existing article id", () => {
     return request(app)
       .get("/api/articles/1")
@@ -76,11 +76,46 @@ describe("/api/articles/:article_id", () => {
       });
   });
 
+  test("test error is received when fed an incorrect id format", () => {
+    return request(app).get("/api/article/l").expect(404);
+  });
+
   test("test error is received when fed an incorrect url", () => {
-    return request(app).get("/api/article/199").expect(404);
+    return request(app).get("/api/artocle/199").expect(404);
   });
 });
 
-describe("", () => {
-  test("", () => {});
+describe("GET /api/articles", () => {
+  test("receive an array with correct key value types", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body, "<---body here");
+        expect(Array.isArray(body.articles)).toBe(true);
+        body.articles.forEach((article) => {
+          expect(article).toHaveProperty("article_id", expect.any(Number));
+          expect(article).toHaveProperty("title", expect.any(String));
+          expect(article).toHaveProperty("topic", expect.any(String));
+          expect(article).toHaveProperty("author", expect.any(String));
+          expect(article).toHaveProperty("created_at", expect.any(String));
+          expect(article).toHaveProperty("votes", expect.any(Number));
+          expect(article).toHaveProperty("article_img_url", expect.any(String));
+          expect(article).toHaveProperty("comment_count", expect.any(String));
+        });
+      });
+  });
+
+  test("receive an array with objects in descending order according to created_at key", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  test("receive code 404 when fed incorrect url", () => {
+    return request(app).get("/api/articless").expect(404);
+  });
 });

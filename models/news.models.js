@@ -1,6 +1,6 @@
 const dbPool = require("../db/connection");
 const fs = require("fs/promises");
-const { checkExists } = require("../utils/utils");
+const { checkExists, checkIfNum } = require("../utils/utils");
 
 exports.accessTopics = () => {
   return dbPool.query("SELECT * FROM topics").then(({ rows }) => {
@@ -13,12 +13,16 @@ exports.accessEndpoints = () => {
     return data;
   });
 };
+exports.accessArticles = () => {
+  return dbPool
+    .query(
+      "select articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, count(comments.article_id) as comment_count from articles left join comments on comments.article_id = articles.article_id group by articles.article_id order by articles.created_at desc"
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
 
 exports.accessArticleById = (article_id) => {
   return checkExists("articles", "article_id", article_id);
-  // return dbPool
-  //   .query("SELECT * FROM articles WHERE article_id = $1", [article_id])
-  //   .then(({ rows }) => {
-  //     return rows;
-  //   });
 };
