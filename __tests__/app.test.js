@@ -91,7 +91,6 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        console.log(body, "<---body here");
         expect(Array.isArray(body.articles)).toBe(true);
         body.articles.forEach((article) => {
           expect(article).toHaveProperty("article_id", expect.any(Number));

@@ -28,7 +28,6 @@ exports.getEndpoints = (request, response, next) => {
 exports.getArticles = (request, response, next) => {
   accessArticles()
     .then((articlesData) => {
-      console.log(articlesData, "<--- article data");
       response.status(200).send({ articles: articlesData });
     })
     .catch((err) => {
