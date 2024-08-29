@@ -25,23 +25,38 @@ exports.accessArticles = () => {
 };
 
 exports.accessArticleById = (article_id) => {
-  return checkExists("articles", "article_id", article_id).then((result) => {
-    return result[0];
-  });
+  if (checkIfNum(article_id)) {
+    return checkExists("articles", "article_id", article_id).then((result) => {
+      return result[0];
+    });
+  }
+  return Promise.reject({ status: 400, msg: "Bad Request" });
 };
 
 exports.accessCommentsByArticleId = (article_id) => {
-  return checkExists("comments", "article_id", article_id, "created_at", true);
+  if (checkIfNum(article_id)) {
+    return checkExists(
+      "comments",
+      "article_id",
+      article_id,
+      "created_at",
+      true
+    );
+  }
+  return Promise.reject({ status: 400, msg: "Bad Request" });
 };
 
 exports.insertCommentsByArticleId = ({ username, body }, { article_id }) => {
-  /*console.log(username, body, article_id, "<--- models args");
-  queryStr = format(
-    "INSERT INTO comments (body, author, article_id, votes) VALUES %L RETURNING *;",
-    [body, username, article_id, 0]
-  );
-  db.query(queryStr).then((result) => {
-    console.log(result, "<--- result");
-    return result.rows;
-  });*/
+  if (checkIfNum(article_id)) {
+    return checkExists("articles", "article_id", article_id).then(() => {
+      queryStr = format(
+        "INSERT INTO comments (body, author, article_id, votes) VALUES (%L) RETURNING *;",
+        [body, username, article_id, 0]
+      );
+      return dbPool.query(queryStr).then((result) => {
+        return result.rows;
+      });
+    });
+  }
+  return Promise.reject({ status: 400, msg: "Bad Request" });
 };

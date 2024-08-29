@@ -77,11 +77,11 @@ describe("GET /api/articles/:article_id", () => {
   });
 
   test("test error is received when fed an incorrect id format", () => {
-    return request(app).get("/api/article/l").expect(404);
+    return request(app).get("/api/articles/l").expect(400);
   });
 
   test("test error is received when fed an incorrect url", () => {
-    return request(app).get("/api/artocle/199").expect(404);
+    return request(app).get("/api/artocles/199").expect(404);
   });
 });
 
@@ -151,23 +151,70 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 
   test("receive code 404 when fed non existent article id", () => {
-    return request(app).get("/api/articles/900/comment").expect(404);
+    return request(app).get("/api/articles/900/comments").expect(404);
   });
 
-  test("receive code 404 when fed invalid article id", () => {
-    return request(app).get("/api/articles/f/comment").expect(404);
+  test("receive code 400 when fed invalid article id", () => {
+    return request(app).get("/api/articles/f/comments").expect(400);
   });
 });
 
-/*describe("POST /api/articles/:article_id/comments", () => {
+describe("POST /api/articles/:article_id/comments", () => {
   test("test post has successfully returned posted comment", () => {
-    const postComment = { username: "butter_bridge", body: "Comment Here" };
+    const article_id = 1;
+    const postComment = { username: "butter_bridge", body: "Comment here" };
     return request(app)
-      .post("/api/articles/1/comments")
+      .post(`/api/articles/${article_id}/comments`)
       .send(postComment)
       .expect(201)
       .then(({ body }) => {
-        console.log(body);
+        expect(body.comment_posted[0]).toHaveProperty("article_id", article_id);
+        expect(body.comment_posted[0]).toHaveProperty(
+          "comment_id",
+          expect.any(Number)
+        );
+        expect(body.comment_posted[0]).toHaveProperty(
+          "author",
+          postComment.username
+        );
+        expect(body.comment_posted[0]).toHaveProperty(
+          "created_at",
+          expect.any(String)
+        );
+        expect(body.comment_posted[0]).toHaveProperty("votes", 0);
+        expect(body.comment_posted[0]).toHaveProperty("body", postComment.body);
       });
   });
-});*/
+
+  test("receive code 404 when fed incorrect url", () => {
+    const postComment = { username: "butter_bridge", body: "Comment here" };
+    return request(app)
+      .post("/api/articles/1/commen")
+      .send(postComment)
+      .expect(404);
+  });
+
+  test("receive code 404 when fed non existent article id", () => {
+    const postComment = { username: "butter_bridge", body: "Comment here" };
+    return request(app)
+      .post("/api/articles/99/comments")
+      .send(postComment)
+      .expect(404);
+  });
+
+  test("receive code 400 when fed invalid article id", () => {
+    const postComment = { username: "butter_bridge", body: "Comment here" };
+    return request(app)
+      .post("/api/articles/d/comments")
+      .send(postComment)
+      .expect(400);
+  });
+
+  test("receive code 404 when fed invalid url", () => {
+    const postComment = { username: "butter_bridge", body: "Comment here" };
+    return request(app)
+      .post("/api/articles/1/comments/s")
+      .send(postComment)
+      .expect(404);
+  });
+});
