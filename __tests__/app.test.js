@@ -210,11 +210,65 @@ describe("POST /api/articles/:article_id/comments", () => {
       .expect(400);
   });
 
-  test("receive code 404 when fed invalid url", () => {
-    const postComment = { username: "butter_bridge", body: "Comment here" };
+  test("receive code 400 when fed invalid messege body", () => {
+    const postComment = { usrname: "butter_bridge", body: "Comment here" };
     return request(app)
-      .post("/api/articles/1/comments/s")
+      .post("/api/articles/1/comments")
       .send(postComment)
-      .expect(404);
+      .expect(400);
+  });
+
+  test("receive code 400 when fed non existent username", () => {
+    const postComment = { username: "bitbridge", body: "Comment here" };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(postComment)
+      .expect(404); //not sure if it should be 404, think maybe it should be 400?
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("receive article with updated votes", () => {
+    const voteUp = { inc_votes: 1 };
+    expectedReturn = {
+      updated_votes: {
+        article_id: 1,
+        title: "Living in the shadow of a great man",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence challenging",
+        created_at: "2020-07-09T20:11:00.000Z",
+        votes: 101,
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      },
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(voteUp)
+      .expect(202)
+      .then(({ body }) => {
+        expect(body).toEqual(expectedReturn);
+      });
+  });
+
+  test("test error recieved when fed a non existent article id", () => {
+    const voteUp = { inc_votes: 1 };
+    return request(app).patch("/api/articles/1000").send(voteUp).expect(404);
+  });
+
+  test("test error recieved when fed an invalid vote incrament", () => {
+    const voteUp = { inc_votes: "f" };
+    return request(app).patch("/api/articles/1").send(voteUp).expect(400);
+  });
+
+  test("test error recieved when fed an invalid body", () => {
+    const voteUp = { increase_votes: "1" };
+    return request(app).patch("/api/articles/1").send(voteUp).expect(400);
+  });
+
+  test("test error recieved when fed an invalid url", () => {
+    const voteUp = { increase_votes: "1" };
+    return request(app).patch("/api/articl/1").send(voteUp).expect(404);
   });
 });

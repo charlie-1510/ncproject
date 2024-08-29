@@ -47,16 +47,48 @@ exports.accessCommentsByArticleId = (article_id) => {
 };
 
 exports.insertCommentsByArticleId = ({ username, body }, { article_id }) => {
-  if (checkIfNum(article_id)) {
-    return checkExists("articles", "article_id", article_id).then(() => {
-      queryStr = format(
-        "INSERT INTO comments (body, author, article_id, votes) VALUES (%L) RETURNING *;",
-        [body, username, article_id, 0]
-      );
-      return dbPool.query(queryStr).then((result) => {
-        return result.rows;
+  if (username && body && checkIfNum(article_id)) {
+    return checkExists("articles", "article_id", article_id)
+      .then(() => {
+        return checkExists("users", "username", username);
+      })
+      .then(() => {
+        queryStr = format(
+          "INSERT INTO comments (body, author, article_id, votes) VALUES (%L) RETURNING *;",
+          [body, username, article_id, 0]
+        );
+        return dbPool.query(queryStr).then((result) => {
+          return result.rows;
+        });
       });
-    });
+  }
+  return Promise.reject({ status: 400, msg: "Bad Request" });
+};
+
+exports.updateArticleById = ({ inc_votes }, { article_id }) => {
+  if (checkIfNum(inc_votes) && checkIfNum(article_id)) {
+    return checkExists("articles", "article_id", article_id)
+      .then(() => {
+        queryStr = format("SELECT votes FROM articles WHERE article_id = %L;", [
+          article_id,
+        ]);
+        return dbPool.query(queryStr);
+      })
+      .then((result) => {
+        let newVote = result.rows[0].votes;
+        console.log(newVote, "< new vote var");
+        newVote += inc_votes;
+        updateStr = format(
+          "UPDATE articles SET votes = %s WHERE article_id = %s RETURNING *;",
+          newVote,
+          article_id
+        );
+        return dbPool.query(updateStr);
+      })
+      .then(({ rows }) => {
+        console.log(rows);
+        return rows[0];
+      });
   }
   return Promise.reject({ status: 400, msg: "Bad Request" });
 };
