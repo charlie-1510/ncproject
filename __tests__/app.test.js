@@ -158,3 +158,16 @@ describe("GET /api/articles/:article_id/comments", () => {
     return request(app).get("/api/articles/f/comment").expect(404);
   });
 });
+
+/*describe("POST /api/articles/:article_id/comments", () => {
+  test("test post has successfully returned posted comment", () => {
+    const postComment = { username: "butter_bridge", body: "Comment Here" };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(postComment)
+      .expect(201)
+      .then(({ body }) => {
+        console.log(body);
+      });
+  });
+});*/
