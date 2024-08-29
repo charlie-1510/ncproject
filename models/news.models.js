@@ -11,7 +11,7 @@ exports.accessTopics = () => {
 
 exports.accessEndpoints = () => {
   return fs.readFile(`${__dirname}/../endpoints.json`, "utf-8").then((data) => {
-    return data;
+    return JSON.parse(data);
   });
 };
 exports.accessArticles = () => {

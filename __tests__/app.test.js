@@ -41,7 +41,7 @@ describe("GET /api", () => {
         return fs.readFile(`${__dirname}/../endpoints.json`, "utf-8");
       })
       .then((file) => {
-        expect(result).toEqual(file);
+        expect(result).toEqual(JSON.parse(file));
       });
   });
 });
