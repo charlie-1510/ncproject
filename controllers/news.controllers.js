@@ -5,6 +5,7 @@ const {
   accessArticles,
   accessCommentsByArticleId,
   insertCommentsByArticleId,
+  updateArticleById,
 } = require("../models/news.models");
 
 exports.getTopics = (request, response, next) => {
@@ -59,11 +60,21 @@ exports.getCommentsByArticleId = (request, response, next) => {
 };
 
 exports.postCommentsByArticleId = (request, response, next) => {
-  const { body } = request;
-  const { params } = request;
+  const { body, params } = request;
   insertCommentsByArticleId(body, params)
     .then((postedComment) => {
       response.status(201).send({ "comment_posted": postedComment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchArticleById = (request, response, next) => {
+  const { body, params } = request;
+  updateArticleById(body, params)
+    .then((updatedArticle) => {
+      response.status(202).send({ "updated_votes": updatedArticle });
     })
     .catch((err) => {
       next(err);
