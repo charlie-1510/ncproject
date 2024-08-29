@@ -1,6 +1,7 @@
 const dbPool = require("../db/connection");
 const fs = require("fs/promises");
 const { checkExists, checkIfNum } = require("../utils/utils");
+const format = require("pg-format");
 
 exports.accessTopics = () => {
   return dbPool.query("SELECT * FROM topics").then(({ rows }) => {
@@ -31,4 +32,16 @@ exports.accessArticleById = (article_id) => {
 
 exports.accessCommentsByArticleId = (article_id) => {
   return checkExists("comments", "article_id", article_id, "created_at", true);
+};
+
+exports.insertCommentsByArticleId = ({ username, body }, { article_id }) => {
+  /*console.log(username, body, article_id, "<--- models args");
+  queryStr = format(
+    "INSERT INTO comments (body, author, article_id, votes) VALUES %L RETURNING *;",
+    [body, username, article_id, 0]
+  );
+  db.query(queryStr).then((result) => {
+    console.log(result, "<--- result");
+    return result.rows;
+  });*/
 };

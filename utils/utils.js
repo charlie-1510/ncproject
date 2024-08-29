@@ -6,24 +6,26 @@ exports.checkExists = (table, column, value, order, desc) => {
   if (order) {
     if (desc) {
       queryStr = format(
-        "SELECT * FROM %I WHERE %I = $1 ORDER BY %I DESC;",
+        "SELECT * FROM %I WHERE %I = %L ORDER BY %I DESC;",
         table,
         column,
+        value,
         order
       );
     } else {
       queryStr = format(
-        "SELECT * FROM %I WHERE %I = $1 ORDER BY %I;",
+        "SELECT * FROM %I WHERE %I = %L ORDER BY %I;",
         table,
         column,
+        value,
         order
       );
     }
   } else {
-    queryStr = format("SELECT * FROM %I WHERE %I = $1;", table, column);
+    queryStr = format("SELECT * FROM %I WHERE %I = %L;", table, column, value);
   }
 
-  return dbPool.query(queryStr, [value]).then(({ rows }) => {
+  return dbPool.query(queryStr).then(({ rows }) => {
     if (rows.length === 0) {
       return Promise.reject({ status: 404, msg: "Resource not found" });
     }

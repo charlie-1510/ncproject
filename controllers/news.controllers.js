@@ -4,6 +4,7 @@ const {
   accessArticleById,
   accessArticles,
   accessCommentsByArticleId,
+  insertCommentsByArticleId,
 } = require("../models/news.models");
 
 exports.getTopics = (request, response, next) => {
@@ -55,4 +56,17 @@ exports.getCommentsByArticleId = (request, response, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.postCommentsByArticleId = (request, response, next) => {
+  /*const { body } = request;
+  const { params } = request;
+  console.log(body, params, "<--body and params");
+  insertCommentsByArticleId(body, params)
+    .then((postedComment) => {
+      response.status(200).send({ "comment posted": postedComment });
+    })
+    .catch((err) => {
+      next(err);
+    });*/
 };
