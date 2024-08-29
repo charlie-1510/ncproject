@@ -59,14 +59,13 @@ exports.getCommentsByArticleId = (request, response, next) => {
 };
 
 exports.postCommentsByArticleId = (request, response, next) => {
-  /*const { body } = request;
+  const { body } = request;
   const { params } = request;
-  console.log(body, params, "<--body and params");
   insertCommentsByArticleId(body, params)
     .then((postedComment) => {
-      response.status(200).send({ "comment posted": postedComment });
+      response.status(201).send({ "comment_posted": postedComment });
     })
     .catch((err) => {
       next(err);
-    });*/
+    });
 };

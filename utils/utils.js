@@ -32,3 +32,10 @@ exports.checkExists = (table, column, value, order, desc) => {
     return rows;
   });
 };
+
+exports.checkIfNum = (num) => {
+  if (isNaN(Number(num))) {
+    return false;
+  }
+  return true;
+};
