@@ -304,7 +304,6 @@ describe("GET /api/users", () => {
       .then((response) => {
         const { body } = response;
         expect(Array.isArray(body.users)).toBe(true);
-        console.log(body);
         body.users.forEach((user) => {
           expect(user).toHaveProperty("username", expect.any(String));
           expect(user).toHaveProperty("name", expect.any(String));
