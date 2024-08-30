@@ -41,7 +41,8 @@ exports.getUsers = (request, response, next) => {
 };
 
 exports.getArticles = (request, response, next) => {
-  accessArticles()
+  const { sort_by, order } = request.query;
+  accessArticles(sort_by, order)
     .then((articlesData) => {
       response.status(200).send({ articles: articlesData });
     })
@@ -49,6 +50,7 @@ exports.getArticles = (request, response, next) => {
       next(err);
     });
 };
+
 exports.getArticleById = (request, response, next) => {
   const { params } = request;
   accessArticleById(params.article_id)

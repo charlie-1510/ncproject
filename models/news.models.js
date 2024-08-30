@@ -21,14 +21,26 @@ exports.accessUsers = () => {
   });
 };
 
-exports.accessArticles = () => {
-  return dbPool
-    .query(
-      "select articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, count(comments.article_id) as comment_count from articles left join comments on comments.article_id = articles.article_id group by articles.article_id order by articles.created_at desc"
-    )
-    .then(({ rows }) => {
+exports.accessArticles = (sort_by = "created_at", order = "desc") => {
+  greenColumns = [
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "body",
+    "created_at",
+  ];
+  if (greenColumns.includes(sort_by) && (order === "desc" || order === "asc")) {
+    qryStr = format(
+      "select articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, count(comments.article_id) as comment_count from articles left join comments on comments.article_id = articles.article_id group by articles.article_id order by %I %s",
+      sort_by,
+      order
+    );
+    return dbPool.query(qryStr).then(({ rows }) => {
       return rows;
     });
+  }
+  return Promise.reject({ status: 400, msg: "Bad Request" });
 };
 
 exports.accessArticleById = (article_id) => {

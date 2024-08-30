@@ -316,3 +316,37 @@ describe("GET /api/users", () => {
     return request(app).get("/api/use").expect(404);
   });
 });
+
+describe("GET /api/articles (sorting queries)", () => {
+  test("receive an array with objects in ascending order according to article_id", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles).toBeSortedBy("article_id", { descending: false });
+      });
+  });
+
+  test("receive an array with objects in descending order according to title", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("title", { descending: true });
+      });
+  });
+
+  test("receive an array with objects in ascending order according to default key - created_at", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { descending: false });
+      });
+  });
+
+  test("receive an error when fed invalid query", () => {
+    return request(app).get("/api/articles?sort_by=tittle").expect(400);
+  });
+});
