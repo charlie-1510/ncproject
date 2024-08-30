@@ -328,12 +328,14 @@ describe("GET /api/articles (sorting queries)", () => {
       });
   });
 
-  test("receive an array with objects in descending order according to title", () => {
+  test("receive an array with objects in descending order according to votes", () => {
     return request(app)
-      .get("/api/articles?sort_by=title")
+      .get("/api/articles?sort_by=votes")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toBeSortedBy("title", { descending: true });
+        expect(body.articles).toBeSortedBy("votes", {
+          descending: true,
+        });
       });
   });
 
@@ -346,7 +348,44 @@ describe("GET /api/articles (sorting queries)", () => {
       });
   });
 
-  test("receive an error when fed invalid query", () => {
+  test("receive an error when fed invalid query value", () => {
     return request(app).get("/api/articles?sort_by=tittle").expect(400);
+  });
+});
+
+describe("GET /api/articles (topic query)", () => {
+  test("receive an array with objects filtered by topic", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.articles)).toBe(true);
+        body.articles.forEach((article) => {
+          expect(article.topic).toEqual("mitch");
+        });
+      });
+  });
+
+  test("receive an error when fed non existent topic", () => {
+    return request(app).get("/api/articles?topic=micheal").expect(404);
+  });
+
+  test("ignores query when fed in invalid query key", () => {
+    return request(app)
+      .get("/api/articles?tapik=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.articles)).toBe(true);
+        body.articles.forEach((article) => {
+          expect(article).toHaveProperty("article_id", expect.any(Number));
+          expect(article).toHaveProperty("title", expect.any(String));
+          expect(article).toHaveProperty("topic", expect.any(String));
+          expect(article).toHaveProperty("author", expect.any(String));
+          expect(article).toHaveProperty("created_at", expect.any(String));
+          expect(article).toHaveProperty("votes", expect.any(Number));
+          expect(article).toHaveProperty("article_img_url", expect.any(String));
+          expect(article).toHaveProperty("comment_count", expect.any(String));
+        });
+      });
   });
 });
