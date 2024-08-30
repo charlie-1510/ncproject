@@ -272,3 +272,26 @@ describe("PATCH /api/articles/:article_id", () => {
     return request(app).patch("/api/articl/1").send(voteUp).expect(404);
   });
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("removes comment by comment id", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+
+  test("receives error when fed non existant comment id ", () => {
+    return request(app).delete("/api/comments/1000").expect(404);
+  });
+
+  test("receives error when fed invalid comment id", () => {
+    return request(app).delete("/api/comments/j").expect(400);
+  });
+
+  test("receives error when fed incorrect url", () => {
+    return request(app).delete("/api/commens/1").expect(404);
+  });
+});
