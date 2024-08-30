@@ -76,7 +76,6 @@ exports.updateArticleById = ({ inc_votes }, { article_id }) => {
       })
       .then((result) => {
         let newVote = result.rows[0].votes;
-        console.log(newVote, "< new vote var");
         newVote += inc_votes;
         updateStr = format(
           "UPDATE articles SET votes = %s WHERE article_id = %s RETURNING *;",
@@ -86,9 +85,19 @@ exports.updateArticleById = ({ inc_votes }, { article_id }) => {
         return dbPool.query(updateStr);
       })
       .then(({ rows }) => {
-        console.log(rows);
         return rows[0];
       });
+  }
+  return Promise.reject({ status: 400, msg: "Bad Request" });
+};
+
+exports.removeCommentById = (comment_id) => {
+  if (checkIfNum(comment_id)) {
+    return checkExists("comments", "comment_id", comment_id).then(() => {
+      return dbPool.query("DELETE FROM comments WHERE comment_id = $1;", [
+        comment_id,
+      ]);
+    });
   }
   return Promise.reject({ status: 400, msg: "Bad Request" });
 };

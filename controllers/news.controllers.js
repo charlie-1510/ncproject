@@ -6,6 +6,7 @@ const {
   accessCommentsByArticleId,
   insertCommentsByArticleId,
   updateArticleById,
+  removeCommentById,
 } = require("../models/news.models");
 
 exports.getTopics = (request, response, next) => {
@@ -75,6 +76,17 @@ exports.patchArticleById = (request, response, next) => {
   updateArticleById(body, params)
     .then((updatedArticle) => {
       response.status(202).send({ "updated_votes": updatedArticle });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteCommentById = (request, response, next) => {
+  const { comment_id } = request.params;
+  removeCommentById(comment_id)
+    .then(() => {
+      response.status(204).send();
     })
     .catch((err) => {
       next(err);
