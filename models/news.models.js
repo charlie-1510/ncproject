@@ -22,7 +22,7 @@ exports.accessUsers = () => {
 };
 
 exports.accessArticles = (sort_by = "created_at", order = "desc", topic) => {
-  let qryStr;
+  let queryStr;
   greenColumns = [
     "article_id",
     "title",
@@ -34,23 +34,23 @@ exports.accessArticles = (sort_by = "created_at", order = "desc", topic) => {
     "article_img_url",
   ];
   if (greenColumns.includes(sort_by) && (order === "desc" || order === "asc")) {
-    qryStr = format(
+    queryStr = format(
       "select articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, count(comments.article_id) as comment_count from articles left join comments on comments.article_id = articles.article_id"
     );
     if (topic) {
       return checkExists("articles", "topic", topic).then(() => {
-        qryStr += format(" where topic = %L", topic);
-        qryStr += format(" group by articles.article_id");
-        qryStr += format(" order by %I %s", sort_by, order);
-        return dbPool.query(qryStr).then(({ rows }) => {
+        queryStr += format(" where topic = %L", topic);
+        queryStr += format(" group by articles.article_id");
+        queryStr += format(" order by %I %s", sort_by, order);
+        return dbPool.query(queryStr).then(({ rows }) => {
           return rows;
         });
       });
     }
 
-    qryStr += format(" group by articles.article_id");
-    qryStr += format(" order by %I %s", sort_by, order);
-    return dbPool.query(qryStr).then(({ rows }) => {
+    queryStr += format(" group by articles.article_id");
+    queryStr += format(" order by %I %s", sort_by, order);
+    return dbPool.query(queryStr).then(({ rows }) => {
       return rows;
     });
   }
@@ -59,9 +59,18 @@ exports.accessArticles = (sort_by = "created_at", order = "desc", topic) => {
 
 exports.accessArticleById = (article_id) => {
   if (checkIfNum(article_id)) {
-    return checkExists("articles", "article_id", article_id).then((result) => {
-      return result[0];
-    });
+    return checkExists("articles", "article_id", article_id)
+      .then(() => {
+        const queryStr = format(
+          "select articles.article_id, title, topic, articles.author, articles.body, articles.created_at, articles.votes, article_img_url, count(comments.article_id) as comment_count from articles left join comments on comments.article_id = articles.article_id where articles.article_id = %L group by articles.article_id",
+          article_id
+        );
+
+        return dbPool.query(queryStr);
+      })
+      .then(({ rows }) => {
+        return rows[0];
+      });
   }
   return Promise.reject({ status: 400, msg: "Bad Request" });
 };
