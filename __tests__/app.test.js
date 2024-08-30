@@ -51,19 +51,27 @@ describe("GET /api/articles/:article_id", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
-      .then((response) => {
-        const { body } = response;
-        expect(body.article).toEqual({
-          article_id: 1,
-          title: "Living in the shadow of a great man",
-          topic: "mitch",
-          author: "butter_bridge",
-          body: "I find this existence challenging",
-          created_at: "2020-07-09T20:11:00.000Z",
-          votes: 100,
-          article_img_url:
-            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-        });
+      .then(({ body }) => {
+        expect(body.article.article_id).toEqual(1);
+      });
+  });
+
+  test("receive an object with correct key value types", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toHaveProperty("article_id", expect.any(Number));
+        expect(body.article).toHaveProperty("title", expect.any(String));
+        expect(body.article).toHaveProperty("topic", expect.any(String));
+        expect(body.article).toHaveProperty("author", expect.any(String));
+        expect(body.article).toHaveProperty("body", expect.any(String));
+        expect(body.article).toHaveProperty("created_at", expect.any(String));
+        expect(body.article).toHaveProperty("votes", expect.any(Number));
+        expect(body.article).toHaveProperty(
+          "article_img_url",
+          expect.any(String)
+        );
       });
   });
 
@@ -82,6 +90,18 @@ describe("GET /api/articles/:article_id", () => {
 
   test("test error is received when fed an incorrect url", () => {
     return request(app).get("/api/artocles/199").expect(404);
+  });
+
+  test("receive an object with comment count", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toHaveProperty(
+          "comment_count",
+          expect.any(String)
+        );
+      });
   });
 });
 
