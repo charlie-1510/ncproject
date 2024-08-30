@@ -21,21 +21,35 @@ exports.accessUsers = () => {
   });
 };
 
-exports.accessArticles = (sort_by = "created_at", order = "desc") => {
+exports.accessArticles = (sort_by = "created_at", order = "desc", topic) => {
+  let qryStr;
   greenColumns = [
     "article_id",
     "title",
     "topic",
     "author",
-    "body",
     "created_at",
+    "votes",
+    "comment_count",
+    "article_img_url",
   ];
   if (greenColumns.includes(sort_by) && (order === "desc" || order === "asc")) {
     qryStr = format(
-      "select articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, count(comments.article_id) as comment_count from articles left join comments on comments.article_id = articles.article_id group by articles.article_id order by %I %s",
-      sort_by,
-      order
+      "select articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, count(comments.article_id) as comment_count from articles left join comments on comments.article_id = articles.article_id"
     );
+    if (topic) {
+      return checkExists("articles", "topic", topic).then(() => {
+        qryStr += format(" where topic = %L", topic);
+        qryStr += format(" group by articles.article_id");
+        qryStr += format(" order by %I %s", sort_by, order);
+        return dbPool.query(qryStr).then(({ rows }) => {
+          return rows;
+        });
+      });
+    }
+
+    qryStr += format(" group by articles.article_id");
+    qryStr += format(" order by %I %s", sort_by, order);
     return dbPool.query(qryStr).then(({ rows }) => {
       return rows;
     });
