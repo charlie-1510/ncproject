@@ -1,6 +1,7 @@
 const {
-  accessTopics,
   accessEndpoints,
+  accessTopics,
+  accessUsers,
   accessArticleById,
   accessArticles,
   accessCommentsByArticleId,
@@ -8,6 +9,16 @@ const {
   updateArticleById,
   removeCommentById,
 } = require("../models/news.models");
+
+exports.getEndpoints = (request, response, next) => {
+  accessEndpoints()
+    .then((endpointData) => {
+      response.status(200).send({ endpoints: endpointData });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 
 exports.getTopics = (request, response, next) => {
   accessTopics()
@@ -19,10 +30,10 @@ exports.getTopics = (request, response, next) => {
     });
 };
 
-exports.getEndpoints = (request, response, next) => {
-  accessEndpoints()
-    .then((endpointData) => {
-      response.status(200).send({ endpoints: endpointData });
+exports.getUsers = (request, response, next) => {
+  accessUsers()
+    .then((usersData) => {
+      response.status(200).send({ users: usersData });
     })
     .catch((err) => {
       next(err);

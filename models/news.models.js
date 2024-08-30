@@ -3,17 +3,24 @@ const fs = require("fs/promises");
 const { checkExists, checkIfNum } = require("../utils/utils");
 const format = require("pg-format");
 
+exports.accessEndpoints = () => {
+  return fs.readFile(`${__dirname}/../endpoints.json`, "utf-8").then((data) => {
+    return JSON.parse(data);
+  });
+};
+
 exports.accessTopics = () => {
   return dbPool.query("SELECT * FROM topics").then(({ rows }) => {
     return rows;
   });
 };
 
-exports.accessEndpoints = () => {
-  return fs.readFile(`${__dirname}/../endpoints.json`, "utf-8").then((data) => {
-    return JSON.parse(data);
+exports.accessUsers = () => {
+  return dbPool.query("SELECT * FROM users").then(({ rows }) => {
+    return rows;
   });
 };
+
 exports.accessArticles = () => {
   return dbPool
     .query(

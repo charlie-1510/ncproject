@@ -295,3 +295,24 @@ describe("DELETE /api/comments/:comment_id", () => {
     return request(app).delete("/api/commens/1").expect(404);
   });
 });
+
+describe("GET /api/users", () => {
+  test("receive array of users with correct key value types", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then((response) => {
+        const { body } = response;
+        expect(Array.isArray(body.users)).toBe(true);
+        body.users.forEach((user) => {
+          expect(user).toHaveProperty("username", expect.any(String));
+          expect(user).toHaveProperty("name", expect.any(String));
+          expect(user).toHaveProperty("avatar_url", expect.any(String));
+        });
+      });
+  });
+
+  test("receive code 404 when fed incorrect url", () => {
+    return request(app).get("/api/use").expect(404);
+  });
+});
