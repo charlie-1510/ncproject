@@ -17,7 +17,9 @@ Within the ".env.development" file, insert the development database name as foll
 Replace <TEST_DATABASE_NAME> and <DEVELOPMENT_DATABASE_NAME> with the test database name and development database name respectively.
 next, type "npm run setup-dbs" into your terminal in the main folders directory to setup your database.
 
-you may also need to install the following:
+You may also need to install the following:
 express "npm install express"
 supertest "npm install -D supertest"
 jest-sorted "npm install --save-dev jest-sorted"
+
+To test the app or utils, change your directory to "**tests**" and type "npm test app.test.js" or "npm test utils.test.js" respectively in to your terminal.
