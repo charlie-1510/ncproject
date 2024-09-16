@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const {
   getEndpoints,
   getTopics,
@@ -11,6 +12,8 @@ const {
   patchArticleById,
   deleteCommentById,
 } = require("./controllers/news.controllers");
+
+app.use(cors());
 
 app.use(express.json());
 
